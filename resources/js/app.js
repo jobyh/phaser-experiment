@@ -3,12 +3,15 @@ import Phaser from 'phaser'
 
 let player
 const dx = 160
-const velocity = 0
 
 let stars
 
 let score = 0
 let scoreText
+
+let bombs
+
+let gameOver = false
 
 function preload() {
     this.load.image('sky', '/assets/sky.png')
@@ -60,7 +63,7 @@ function create() {
 
     this.physics.add.collider(player, platforms)
 
-    let stars = this.physics.add.group({
+    stars = this.physics.add.group({
         key: 'star',
         repeat: 11,
         setXY: { x: 12, y: 0, stepX: 70}
@@ -72,9 +75,33 @@ function create() {
         star.disableBody(true, true)
         score += 10
         scoreText.setText('Score: ' + score)
+
+        if (stars.countActive(true) === 0) {
+            stars.children.iterate(function(child) {
+                child.enableBody(true, child.x, 0, true, true)
+            })
+            let x = player.x < 400
+                ? Phaser.Math.Between(400, 800)
+                : Phaser.Math.Between(0, 400)
+
+            bombs.create(x, 16, 'bomb')
+                .setBounce(1)
+                .setCollideWorldBounds(true)
+                .setVelocity(Phaser.Math.Between(-200, 200), 20)
+        }
     }, null, this)
 
     scoreText = this.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#000'})
+
+    bombs = this.physics.add.group()
+    this.physics.add.collider(bombs, platforms)
+    this.physics.add.collider(player, bombs, function(player, bomb) {
+        this.physics.pause()
+        player.setTint(0xff0000)
+        player.anims.play('turn')
+        gameOver = true
+    }, null, this)
+
 }
 
 function update() {
@@ -93,7 +120,7 @@ function update() {
     }
 
     if (cursors.up.isDown && player.body.touching.down) {
-        player.setVelocityY(-820);
+        player.setVelocityY(-900);
     }
 }
 
