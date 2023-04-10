@@ -1,5 +1,4 @@
-import './bootstrap'
-import Phaser from 'phaser'
+import * as Phaser from 'phaser'
 
 let player
 const dx = 160
