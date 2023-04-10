@@ -3,8 +3,8 @@ import InputPlugin = Phaser.Input.InputPlugin
 export default abstract class BaseInput {
     constructor(protected input: InputPlugin) {}
 
-    abstract isUp(): boolean
-    abstract isRight(): boolean
-    abstract isDown(): boolean
-    abstract isLeft(): boolean
+    abstract get isUp(): boolean
+    abstract get isRight(): boolean
+    abstract get isDown(): boolean
+    abstract get isLeft(): boolean
 }

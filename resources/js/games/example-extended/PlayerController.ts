@@ -26,7 +26,7 @@ export default class PlayerController {
     }
 
     protected dir(direction: Direction) {
-        return this.inputs.find(input => input[direction]())
+        return this.inputs.find(input => input[direction])
     }
 
     left(): boolean {
