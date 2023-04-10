@@ -6,6 +6,10 @@ new Phaser.Game({
     width: 800,
     height: 600,
     scene: [new SceneOne()],
+    input: {
+        gamepad: true,
+        keyboard: true,
+    },
     physics: {
         default: 'arcade',
         arcade: {

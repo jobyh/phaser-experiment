@@ -3,9 +3,11 @@ import Scene = Phaser.Scene
 import Text = Phaser.GameObjects.Text
 import SpriteWithDynamicBody = Phaser.Types.Physics.Arcade.SpriteWithDynamicBody
 import Group = Phaser.Physics.Arcade.Group
+import PlayerController from '../PlayerController'
 
 export default class SceneOne extends Scene {
     protected player: SpriteWithDynamicBody
+    protected controller: PlayerController
     protected stars: Group
     protected dx = 160
 
@@ -45,6 +47,8 @@ export default class SceneOne extends Scene {
         this.player.setBounce(0.4)
         this.player.body.setGravityY(1500)
         this.player.setCollideWorldBounds(true)
+
+        this.controller = new PlayerController(this.player, this.input)
 
         this.anims.create({
             key: 'left',
@@ -134,13 +138,22 @@ export default class SceneOne extends Scene {
     }
 
     update() {
-        const cursors = this.input.keyboard.createCursorKeys()
+        // const pad = this.input.gamepad.pad1
+
+        // Do we need this?
+        // this.input.gamepad.once('connect', function (pad) {
+        //     console.log('pad connected')
+        // })
+        //
+        // if (this.input.gamepad.pad1) {
+        //     console.log('pad1 connected!')
+        // }
         // const pad = this.input.gamepad.getPad(0)
 
-        if (cursors.left.isDown) {
+        if (this.controller.left()) {
             this.player.setVelocityX(-this.dx)
             this.player.anims.play('left', true)
-        } else if (cursors.right.isDown) {
+        } else if (this.controller.right()) {
             this.player.setVelocityX(this.dx)
             this.player.anims.play('right', true)
         } else {
@@ -148,7 +161,7 @@ export default class SceneOne extends Scene {
             this.player.anims.play('turn', true)
         }
 
-        if (cursors.up.isDown && this.player.body.touching.down) {
+        if (this.controller.up() && this.player.body.touching.down) {
             this.player.setVelocityY(-900)
         }
     }
