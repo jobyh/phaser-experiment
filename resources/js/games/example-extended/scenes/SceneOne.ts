@@ -3,11 +3,13 @@ import Scene = Phaser.Scene
 import Text = Phaser.GameObjects.Text
 import SpriteWithDynamicBody = Phaser.Types.Physics.Arcade.SpriteWithDynamicBody
 import Group = Phaser.Physics.Arcade.Group
-import PlayerController from '../PlayerController'
+import Player from '../Player'
+import HTML5AudioSound = Phaser.Sound.HTML5AudioSound
+import BaseSound = Phaser.Sound.BaseSound
 
 export default class SceneOne extends Scene {
     protected player: SpriteWithDynamicBody
-    protected controller: PlayerController
+    protected controller: Player
     protected stars: Group
     protected dx = 160
 
@@ -17,11 +19,16 @@ export default class SceneOne extends Scene {
     protected bombs
     protected gameOver = false
 
-    constructor() {
-        super({})
-    }
+    protected sounds: Record<string, BaseSound> = {}
 
     preload() {
+        this.load.audio('pop', ['/assets/pop.ogg', '/assets/pop.mp3'])
+        this.load.audio('ting', ['/assets/ting.ogg', '/assets/ting.mp3'])
+        this.load.audio('raspberry', [
+            '/assets/raspberry.ogg',
+            '/assets/raspberry.mp3',
+        ])
+
         this.load.image('sky', '/assets/sky.png')
         this.load.image('ground', '/assets/platform.png')
         this.load.image('star', '/assets/star.png')
@@ -33,6 +40,10 @@ export default class SceneOne extends Scene {
     }
 
     create() {
+        this.sounds.pop = this.sound.add('pop')
+        this.sounds.ting = this.sound.add('ting')
+        this.sounds.raspberry = this.sound.add('raspberry')
+
         this.add.image(400, 300, 'sky')
 
         const platforms = this.physics.add.staticGroup()
@@ -48,7 +59,7 @@ export default class SceneOne extends Scene {
         this.player.body.setGravityY(1500)
         this.player.setCollideWorldBounds(true)
 
-        this.controller = new PlayerController(this.player, this.input)
+        this.controller = new Player(this.player, this.input)
 
         this.anims.create({
             key: 'left',
@@ -90,6 +101,7 @@ export default class SceneOne extends Scene {
                 star: SpriteWithDynamicBody,
             ) {
                 star.disableBody(true, true)
+                this.sounds.ting.play()
                 this.score += 10
                 this.scoreText.setText('Score: ' + this.score)
 
@@ -130,6 +142,7 @@ export default class SceneOne extends Scene {
                 this.physics.pause()
                 player.setTint(0xff0000)
                 player.anims.play('turn')
+                this.sounds.raspberry.play()
                 this.gameOver = true
             },
             null,
@@ -163,6 +176,7 @@ export default class SceneOne extends Scene {
 
         if (this.controller.up() && this.player.body.touching.down) {
             this.player.setVelocityY(-900)
+            this.sounds.pop.play()
         }
     }
 }

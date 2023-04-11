@@ -1,8 +1,6 @@
 import * as Phaser from 'phaser'
 import SpriteWithDynamicBody = Phaser.Types.Physics.Arcade.SpriteWithDynamicBody
 import InputPlugin = Phaser.Input.InputPlugin
-import CursorKeys = Phaser.Types.Input.Keyboard.CursorKeys
-import Gamepad = Phaser.Input.Gamepad.Gamepad
 import BaseInput from './input/BaseInput'
 import KeyboardInput from './input/KeyboardInput'
 import Dualshock4 from './input/Dualshock4'
@@ -14,7 +12,7 @@ enum Direction {
     Left = 'isLeft',
 }
 
-export default class PlayerController {
+export default class Player {
     protected inputs: BaseInput[] = []
 
     constructor(
